@@ -1,0 +1,63 @@
+SITE DISCURSOS PÚBLICOS — REDESIGN AZUL E BRANCO
+
+Arquivos:
+- index.html
+- app.js
+- assets/convite-modelo-base.png (modelo de convite existente)
+- configurar-supabase.sql (configuração de tabelas e permissões)
+
+O QUE FOI ATUALIZADO
+- Redesign responsivo em azul e branco, com painel de resumo.
+- Indicadores de oradores, próximos discursos e temas.
+- Preservado o modelo atual de convite e a inclusão da congregação do orador.
+- Cadastro de orador continua preenchendo o tema ao informar um número conhecido.
+- Temas associados a oradores aparecem como “SIM · COM ORADOR”.
+- Removidas as opções de sublinhar temas.
+- Removida a aparência de texto riscado dos temas indisponíveis.
+- Oradores, marcações e temas personalizados passam a usar tabelas compartilhadas do Supabase.
+- Usuários autenticados podem cadastrar e editar; exclusão de oradores, temas e limpeza das marcações fica restrita ao administrador, com RLS no banco.
+
+IMPORTANTE: A ALTERAÇÃO DO SITE NÃO É PUBLICADA AUTOMATICAMENTE
+Você precisa substituir os arquivos no repositório GitHub e executar o SQL no Supabase antes de testar as funções compartilhadas.
+
+PASSO 1 — FAÇA UMA CÓPIA DE SEGURANÇA
+Baixe o ZIP atual do site ou guarde os arquivos atuais antes de substituí-los.
+
+PASSO 2 — EXECUTE O SQL
+1. O app.js deste ZIP já está configurado para o projeto zbciytabqdzjtrnpsszg.
+2. Abra SQL Editor e crie uma nova consulta.
+3. Abra o arquivo configurar-supabase.sql, copie todo o conteúdo e cole no SQL Editor.
+4. Execute a consulta.
+5. Entre no site e crie/entre com sua conta.
+6. No Supabase, abra Authentication > Users e copie o UUID da sua conta.
+7. No SQL Editor, execute esta consulta substituindo o texto pelo UUID verdadeiro da sua conta:
+
+   insert into public.site_admins (user_id)
+   values ('COLE-SEU-UUID-AQUI')
+   on conflict (user_id) do nothing;
+
+Só faça isso com o UUID da sua própria conta, para que você seja o administrador. Não compartilhe sua senha nem qualquer chave secreta do Supabase.
+
+PASSO 3 — PUBLIQUE NO GITHUB
+No repositório do GitHub, substitua index.html e app.js pelos arquivos deste ZIP. Envie também configurar-supabase.sql para guardar como referência e mantenha a pasta assets com convite-modelo-base.png. Faça commit das alterações e espere o GitHub Pages publicar.
+
+PASSO 4 — TESTE
+- Criar/entrar com uma conta.
+- Cadastrar e editar um orador.
+- Confirmar que outro usuário autenticado vê o mesmo orador.
+- Marcar SIM/NÃO e verificar que a marcação é compartilhada.
+- Adicionar um tema e verificar que aparece para outro usuário.
+- Confirmar que apenas a conta administradora vê os botões de exclusão/limpeza.
+
+NOTAS
+- O SQL mantém os registros já existentes em public.oradores; não apaga a tabela.
+- As marcações pessoais antigas em public.discurso_marcacoes não são apagadas, mas as marcações compartilhadas passam a usar public.discurso_marcacoes_compartilhadas.
+- Temas personalizados que estavam somente no localStorage de um navegador não podem ser migrados automaticamente pelo ZIP; se houver algum, será necessário cadastrá-lo novamente depois da configuração.
+- O ZIP fornecido não continha um arquivo de imagem oficial/autorizado do logotipo JW.ORG. O cabeçalho mantém a marca textual estilizada existente; para usar o logotipo gráfico oficial, coloque no assets apenas um arquivo que você esteja autorizado a usar e atualize o cabeçalho para apontar para ele.
+
+
+ATUALIZAÇÃO DE FUNCIONALIDADES
+- Para habilitar a função de riscar/restaurar temas com sincronização entre usuários, execute o arquivo atualizar-risco-temas.sql no SQL Editor do Supabase.
+- A opção “Exportar planilha Excel” cria um arquivo .xlsx com abas Oradores, Temas e Marcações.
+- Na aba Oradores > Agenda por data, os registros ficam agrupados por mês.
+- O convite identifica a congregação como “Cong: nome da congregação”.
